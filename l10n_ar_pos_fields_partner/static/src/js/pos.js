@@ -1,78 +1,46 @@
-odoo.define('l10n_ar_pos_fields_partner.PosModel', function (require) {
-"use strict";
+/** @odoo-module */
 
-    const ClientListScreen = require('point_of_sale.ClientListScreen');
-    const Registries = require('point_of_sale.Registries');
-    const pos_model = require('point_of_sale.models');
-    var models = pos_model.PosModel.prototype.models;
-    var PosModelSuper = pos_model.PosModel;
+import { PosStore } from "@point_of_sale/app/store/pos_store";
+import { patch } from "@web/core/utils/patch";
+import { _t } from "@web/core/l10n/translation";
 
-    pos_model.load_fields('res.partner',
-    [
-        'l10n_latam_identification_type_id',
-        'l10n_ar_afip_responsibility_type_id'
-    ]);
+patch(PosStore.prototype, {
+    /**
+     * Override editPartner to add validation for Argentine tax requirements.
+     *
+     * Validates that registered taxpayers (Responsable Inscripto) have:
+     * - A CUIT (VAT number)
+     * - CUIT as their identification type
+     */
+    async editPartner(partner) {
+        const result = await super.editPartner(...arguments);
 
-    models.push(
-        {
-            model: 'l10n_latam.identification.type',
-            fields: ['id', 'name'],
-            loaded: function (self, category_id) {
-                for (var i in category_id){
-                    self.category_id.push(category_id[i]);
+        if (result && result.l10n_ar_afip_responsibility_type_id) {
+            // Check if it's a registered taxpayer (Responsable Inscripto - ID 1)
+            const isResponsableInscripto = result.l10n_ar_afip_responsibility_type_id.id === 1;
+
+            if (isResponsableInscripto) {
+                // Validate VAT is present
+                if (!result.vat) {
+                    this.notification.add(
+                        _t("Warning: Registered taxpayers must have a CUIT (VAT number)"),
+                        { type: "warning" }
+                    );
                 }
-            },
-        },
-        {
-            model: 'l10n_ar.afip.responsibility.type',
-            fields: ['id', 'name'],
-            loaded: function (self, responsability_type) {
-                for (var i in responsability_type){
-                    self.responsability_type.push(responsability_type[i]);
+
+                // Validate identification type is CUIT (usually id 4)
+                if (result.l10n_latam_identification_type_id) {
+                    const identTypeId = result.l10n_latam_identification_type_id.id;
+                    if (identTypeId && identTypeId !== 4) {
+                        this.notification.add(
+                            _t("Warning: Registered taxpayers should have CUIT as identification type"),
+                            { type: "warning" }
+                        );
+                    }
                 }
-            },
-        },
-
-        );
-
-    pos_model.PosModel = pos_model.PosModel.extend({
-        initialize: function(session, attributes) {
-
-            PosModelSuper.prototype.initialize.call(this, session, attributes)
-            this.category_id = [];
-            this.responsability_type = [];
-
-        },
-    });
-
-    const PosClientListScreen = (ClientListScreen) =>
-        class extends ClientListScreen {
-
-            async saveChanges(event) {
-                var self = this;
-                let fields = event.detail.processedChanges;
-                // si es responsable inscripto, vat is required
-                if (!fields.vat && fields.l10n_ar_afip_responsibility_type_id == '1' ) {
-                    await this.showPopup('ErrorPopup', {
-                        title: this.env._t('Falta CUIT'),
-                        body: this.env._t('El campo CUIT (NIF) es requerido.'),
-                    });
-                    return;
-                }
-                // si es responsable inscripto, el tipo de documento debe ser cuit
-                if (fields.l10n_latam_identification_type_id != '4' && fields.l10n_ar_afip_responsibility_type_id == '1' ) {
-                    await this.showPopup('ErrorPopup', {
-                        title: this.env._t('Falta CUIT'),
-                        body: this.env._t('Seleccione Tipo Doc. CUIT'),
-                    });
-                    return;
-                }
-                return super.saveChanges(event);
             }
-
         }
-        Registries.Component.extend(ClientListScreen, PosClientListScreen);
 
-        return ClientListScreen;
-
+        return result;
+    },
 });

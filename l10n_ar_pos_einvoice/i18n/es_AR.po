@@ -1,0 +1,38 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* l10n_ar_pos_einvoice
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0+e\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-10-24 04:57+0000\n"
+"PO-Revision-Date: 2025-10-24 04:57+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: l10n_ar_pos_einvoice
+#: model:ir.model,name:l10n_ar_pos_einvoice.model_res_config_settings
+msgid "Config Settings"
+msgstr "Ajustes de configuración"
+
+#. module: l10n_ar_pos_einvoice
+#: model_terms:ir.ui.view,arch_db:l10n_ar_pos_einvoice.res_config_settings_view_form_einvoice
+msgid "Display the PDF invoice in the POS interface."
+msgstr "Mostrar la factura PDF en la interfaz del POS."
+
+#. module: l10n_ar_pos_einvoice
+#: model:ir.model,name:l10n_ar_pos_einvoice.model_pos_config
+msgid "Point of Sale Configuration"
+msgstr "Configuración del punto de venta"
+
+#. module: l10n_ar_pos_einvoice
+#: model:ir.model.fields,field_description:l10n_ar_pos_einvoice.field_pos_config__print_pdf_invoice
+#: model:ir.model.fields,field_description:l10n_ar_pos_einvoice.field_res_config_settings__print_pdf_invoice
+#: model_terms:ir.ui.view,arch_db:l10n_ar_pos_einvoice.res_config_settings_view_form_einvoice
+msgid "Print PDF Invoice"
+msgstr "Imprimir Factura PDF"
