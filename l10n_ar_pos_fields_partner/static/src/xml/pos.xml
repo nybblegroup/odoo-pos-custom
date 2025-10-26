@@ -1,80 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<templates id="template" xml:space="preserve">
-    <t t-name="ClientListScreen" t-inherit="point_of_sale.ClientListScreen" t-inherit-mode="extension" owl="1">
-        <xpath expr="//table[hasclass('client-list')]" position="replace">
-            <table class="client-list">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th t-if="!env.isMobile">Address</th>
-                        <th>Responsabilidad AFIP</th>
-                        <th>Tipo Documento</th>
-                        <th>Número de documento</th>
-                    </tr>
-                </thead>
-                <tbody class="client-list-contents">
-                    <t t-foreach="clients" t-as="partner"
-                        t-key="partner.id">
-                        <ClientLine partner="partner"
-                                    selectedClient="state.selectedClient"
-                                    detailIsShown="state.detailIsShown"
-                                    t-on-click-client="clickClient" />
-                    </t>
-                </tbody>
-            </table>
+<templates xml:space="preserve">
+
+    <!-- Add columns to Partner List header -->
+    <t t-name="point_of_sale.PartnerList" t-inherit="point_of_sale.PartnerList" t-inherit-mode="extension">
+        <xpath expr="//thead/tr/th[@class='partner-line-email py-2']" position="after">
+            <th class="py-2 text-center">AFIP Responsibility</th>
+            <th class="py-2 text-center">ID Type</th>
+            <th class="py-2 text-center">VAT/ID Number</th>
         </xpath>
     </t>
 
-    <t t-name="ClientLine" t-inherit="point_of_sale.ClientLine" t-inherit-mode="extension" owl="1">
-        <xpath expr="//tr//td[3]" position="replace">
-            <td t-if="!env.isMobile">
-                <t t-esc='props.partner.l10n_ar_afip_responsibility_type_id[1] or ""' />
-                <span t-if="highlight"><br/></span>
+    <!-- Add columns to Partner Line (Desktop view) -->
+    <t t-name="point_of_sale.PartnerLine" t-inherit="point_of_sale.PartnerLine" t-inherit-mode="extension">
+        <!-- Add after the contact column (partner-line-email) -->
+        <xpath expr="//td[@class='partner-line-email ']" position="after">
+            <td class="text-center afip-responsibility">
+                <t t-if="props.partner.l10n_ar_afip_responsibility_type_id">
+                    <t t-esc="props.partner.l10n_ar_afip_responsibility_type_id.name" />
+                </t>
+                <t t-else="">-</t>
+            </td>
+            <td class="text-center identification-type">
+                <t t-if="props.partner.l10n_latam_identification_type_id">
+                    <t t-esc="props.partner.l10n_latam_identification_type_id.name" />
+                </t>
+                <t t-else="">-</t>
+            </td>
+            <td class="text-center vat-number">
+                <t t-if="props.partner.vat">
+                    <t t-esc="props.partner.vat" />
+                </t>
+                <t t-else="">-</t>
             </td>
         </xpath>
-        <xpath expr="//tr//td[4]" position="replace">
-            <td t-if="!env.isMobile">
-                <t t-esc='props.partner.l10n_latam_identification_type_id[1] or ""' />
-                <span t-if="highlight"><br/></span>
-            </td>
-        </xpath>
-        <xpath expr="//tr//td[5]" position="replace">
-            <td t-if="!env.isMobile">
-                <t t-esc='props.partner.vat or ""' />
-                <span t-if="highlight"><br/></span>
-            </td>
-        </xpath>
-    </t>
 
-    <t t-name="ClientDetailsEdit" t-inherit="point_of_sale.ClientDetailsEdit" t-inherit-mode="extension" owl="1">
-        <xpath expr="//div[hasclass('client-details-right')]" position="inside">
-            <div class="client-detail">
-                <span class="label">Resp. AFIP</span>
-                <select class="detail client-address-country needsclick" name="l10n_ar_afip_responsibility_type_id"
-                        t-on-change="captureChange">
-                    <option value="">None</option>
-                    <t t-foreach="env.pos.responsability_type" t-as="responsability" t-key="responsability.id">
-                        <option t-att-value="responsability.id"
-                                t-att-selected="props.partner.l10n_ar_afip_responsibility_type_id ? ((responsability.id === props.partner.l10n_ar_afip_responsibility_type_id[0]) ? true : undefined) : undefined">
-                            <t t-esc="responsability.name" />
-                        </option>
+        <!-- Add to Mobile view -->
+        <xpath expr="//div[@class='partner-line-email p-1']" position="after">
+            <div class="partner-ar-info p-1 text-muted small">
+                <div t-if="props.partner.l10n_ar_afip_responsibility_type_id">
+                    <i class="fa fa-institution me-1"/>
+                    <t t-esc="props.partner.l10n_ar_afip_responsibility_type_id.name" />
+                </div>
+                <div t-if="props.partner.l10n_latam_identification_type_id or props.partner.vat">
+                    <i class="fa fa-id-card me-1"/>
+                    <t t-if="props.partner.l10n_latam_identification_type_id">
+                        <t t-esc="props.partner.l10n_latam_identification_type_id.name" />:
                     </t>
-                </select>
-            </div>
-            <div class="client-detail">
-                <span class="label">Tipo Doc.</span>
-                <select class="detail client-address-country needsclick" name="l10n_latam_identification_type_id"
-                        t-on-change="captureChange">
-                    <option value="">None</option>
-                    <t t-foreach="env.pos.category_id" t-as="category" t-key="category.id">
-                        <option t-att-value="category.id"
-                                t-att-selected="props.partner.l10n_latam_identification_type_id ? ((category.id === props.partner.l10n_latam_identification_type_id[0]) ? true : undefined) : undefined">
-                            <t t-esc="category.name" />
-                        </option>
+                    <t t-if="props.partner.vat">
+                        <t t-esc="props.partner.vat" />
                     </t>
-                </select>
+                </div>
             </div>
-
         </xpath>
     </t>
 

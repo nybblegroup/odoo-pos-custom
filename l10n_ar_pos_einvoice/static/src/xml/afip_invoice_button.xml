@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <!-- Inherit PaymentScreenButtons to add the AFIP button -->
+    <t t-name="point_of_sale.PaymentScreenButtons" t-inherit="point_of_sale.PaymentScreenButtons" t-inherit-mode="extension">
+        <!-- Add the button after the Invoice button -->
+        <xpath expr="//button[hasclass('js_invoice')]" position="after">
+            <button t-if="pos.config.print_pdf_invoice and currentOrder.is_to_invoice()"
+                    class="button btn btn-light btn-lg d-flex justify-content-between align-items-baseline w-100 w-md-50 lh-lg afip-invoice-btn"
+                    t-on-click="() => this.clickAfipInvoice()">
+                <span><i class="fa fa-file-text-o me-2" />AFIP Invoice</span>
+            </button>
+        </xpath>
+    </t>
+
+</templates>
