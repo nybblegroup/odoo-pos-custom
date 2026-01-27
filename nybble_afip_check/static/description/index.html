@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Nybble AFIP Connection Check</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #875A7B;
+            border-bottom: 3px solid #875A7B;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #875A7B;
+            margin-top: 30px;
+        }
+        .badge {
+            display: inline-block;
+            padding: 5px 10px;
+            margin: 5px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .badge-primary {
+            background-color: #875A7B;
+            color: white;
+        }
+        .badge-success {
+            background-color: #28a745;
+            color: white;
+        }
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+        .feature-list li:before {
+            content: "✓ ";
+            color: #28a745;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .warning-box {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .info-box {
+            background-color: #d1ecf1;
+            border-left: 4px solid #0c5460;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        code {
+            background-color: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+    <h1>🇦🇷 Nybble AFIP Connection Check</h1>
+
+    <div class="badges">
+        <span class="badge badge-primary">Version 18.0.1.0.0</span>
+        <span class="badge badge-success">Odoo 18 Enterprise</span>
+        <span class="badge badge-primary">Argentina Localization</span>
+    </div>
+
+    <h2>📋 Overview</h2>
+    <p>
+        Prevents Point of Sale freezing when AFIP (Argentina Tax Authority) web services are unavailable.
+        This module pre-validates AFIP connectivity before issuing electronic invoices, providing instant
+        feedback to cashiers instead of waiting for connection timeouts.
+    </p>
+
+    <div class="warning-box">
+        <strong>⚠️ Problem Without This Module:</strong><br>
+        When AFIP servers are down, the POS hangs for up to 60 seconds waiting for a timeout,
+        causing frustration and delayed customer service.
+    </div>
+
+    <div class="info-box">
+        <strong>✅ Solution With This Module:</strong><br>
+        Pre-checks AFIP connectivity and immediately shows a user-friendly error message with
+        instructions to create tickets without electronic invoicing.
+    </div>
+
+    <h2>✨ Features</h2>
+    <ul class="feature-list">
+        <li>Pre-validates AFIP connectivity before issuing electronic invoices</li>
+        <li>Shows actionable error messages when AFIP is unreachable</li>
+        <li>Suggests creating tickets without electronic invoice as fallback</li>
+        <li>Prevents long timeout waits and improves cashier experience</li>
+        <li>Comprehensive logging for troubleshooting</li>
+        <li>Zero configuration required - works automatically</li>
+        <li>Fully translated to Spanish</li>
+    </ul>
+
+    <h2>🔧 Technical Details</h2>
+    <p>
+        The module extends <code>account.move._l10n_ar_do_afip_ws_request_cae()</code> to pre-check
+        connectivity using <code>journal._l10n_ar_get_afip_last_invoice_number()</code>. If AFIP
+        doesn't respond, it raises a <code>ValidationError</code> with a user-friendly message.
+    </p>
+
+    <h2>📦 Dependencies</h2>
+    <ul>
+        <li><code>point_of_sale</code> - Odoo POS module</li>
+        <li><code>l10n_ar_edi</code> - Argentina Electronic Invoicing (Enterprise)</li>
+    </ul>
+
+    <h2>🚀 Installation</h2>
+    <ol>
+        <li>Copy module to your Odoo addons directory</li>
+        <li>Update apps list in Odoo</li>
+        <li>Search for "Nybble AFIP Connection Check"</li>
+        <li>Click Install</li>
+    </ol>
+
+    <h2>💡 Usage</h2>
+    <p>
+        No configuration needed! The module works automatically in the background.
+        When AFIP is down, users will see a clear error message with instructions.
+    </p>
+
+    <h2>📝 Changelog</h2>
+    <h3>Version 18.0.1.0.0 (2026-01-27)</h3>
+    <ul>
+        <li>✨ Initial migration from Odoo 13 to Odoo 18</li>
+        <li>♻️ Refactored with English naming conventions</li>
+        <li>🌐 Proper translation support</li>
+        <li>📝 Improved logging and error messages</li>
+        <li>🐛 Better exception handling</li>
+    </ul>
+
+    <h2>👥 Credits</h2>
+    <p>
+        <strong>Author:</strong> Nybble Group<br>
+        <strong>Website:</strong> <a href="https://www.nybble.com.co">www.nybble.com.co</a><br>
+        <strong>License:</strong> LGPL-3
+    </p>
+
+    <h2>🆘 Support</h2>
+    <p>
+        For support, bug reports, or feature requests, please contact Nybble Group.
+    </p>
+</body>
+</html>

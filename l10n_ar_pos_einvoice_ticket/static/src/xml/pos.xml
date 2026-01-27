@@ -6,9 +6,9 @@
             <div style="margin-bottom:0.4rem;text-align: center;"><t t-esc="props.data.pos_street" /></div>
         </xpath>
         <xpath expr="//t[@t-if='props.data.company.vat']" position="after">
-            <div>Ing. Brutos: <t t-esc="this.env.services.pos.company.l10n_ar_gross_income_number"/></div>
-            <div>Inicio de actividadess: <t t-esc="this.env.services.pos.company.l10n_ar_afip_start_date"/></div>
-            <div><t t-esc="this.env.services.pos.company.l10n_ar_afip_responsibility_type_id[1]"/></div>
+            <div t-if="this.env.services.pos.company.l10n_ar_gross_income_number">Ing. Brutos: <t t-esc="this.env.services.pos.company.l10n_ar_gross_income_number"/></div>
+            <div t-if="this.env.services.pos.company.l10n_ar_afip_start_date">Inicio de actividadess: <t t-esc="this.env.services.pos.company.l10n_ar_afip_start_date"/></div>
+            <div t-if="this.env.services.pos.company.l10n_ar_afip_responsibility_type_id"><t t-esc="this.env.services.pos.company.l10n_ar_afip_responsibility_type_id[1]"/></div>
                 <div>Dirección: <t t-esc="this.env.services.pos.company.street"/>
                 <t t-if="this.env.services.pos.company.city">
                     , <t t-esc="this.env.services.pos.company.city"/>
@@ -42,7 +42,7 @@
                 <div> CLIENTE: <t t-esc="this.env.services.pos.get_order().partner.name"/></div>
                 <t t-if='props.data.invoice_number'>
                     <!-- si el tipo de doc. es Sigd no lo muestro -->
-                    <t t-if="this.env.services.pos.get_order().partner.l10n_latam_identification_type_id[0] != 7">
+                    <t t-if="this.env.services.pos.get_order().partner.l10n_latam_identification_type_id and this.env.services.pos.get_order().partner.l10n_latam_identification_type_id[0] != 7">
                         <t t-esc='this.env.services.pos.get_order().partner.l10n_latam_identification_type_id[1]' />:
                     </t>
                     <t t-if="this.env.services.pos.get_order().partner.vat">
@@ -100,7 +100,7 @@
             </t>
         </xpath>
         <xpath expr="//div[@class='pos-receipt-taxes']" position="replace">
-            <div t-if="props.data.tax_details.length > 0 and props.data.invoice_letter == 'A'" class="pos-receipt-taxes">
+            <div t-if="props.data.tax_details and props.data.tax_details.length > 0 and props.data.invoice_letter == 'A'" class="pos-receipt-taxes">
                 <span />
                 <span>VAT</span>
                 <span>ExVAT</span>
@@ -113,7 +113,7 @@
                     <span t-esc="props.formatCurrency(tax.amount + tax.base, false)" />
                     <span />
                 </t>
-                <t t-if="props.data.tax_details.length > 1">
+                <t t-if="props.data.tax_details and props.data.tax_details.length > 1">
                     <span />
                     <span t-esc="props.formatCurrency(props.data.amount_tax, false)" />
                     <span t-esc="props.formatCurrency(props.data.total_without_tax, false)" />
